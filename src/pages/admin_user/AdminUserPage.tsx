@@ -14,6 +14,10 @@
  * off adminRouteConfig.ts, so nothing else needs to change.
  */
 
+import AllInvoices from "../../invoices/AllInvoices"; // adjust path to where you place these files
+import CreateNewInvoice from "../../invoices/CreateNewInvoice";
+import InvoiceReports from "../../invoices/InvoiceReports";
+
 import React, { useState } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +82,17 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
 const STATIC_ROUTE_PATHS: string[] = Object.values(ADMIN_ROUTES).filter((route) => !route.includes(":"));
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Real page components — add an entry here as each page gets built.
+// Routes not listed here still fall back to <PlaceholderPage />.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ADMIN_ROUTE_COMPONENTS: Partial<Record<string, React.ComponentType>> = {
+  [ADMIN_ROUTES.INVOICE_ALL]: AllInvoices,
+  [ADMIN_ROUTES.INVOICE_NEW]: CreateNewInvoice,
+  [ADMIN_ROUTES.INVOICE_REPORTS]: InvoiceReports,
+};
+
 function AdminUserPage() {
   return (
     <Routes>
@@ -86,18 +101,20 @@ function AdminUserPage() {
           <AdminLayout>
             <Routes>
               {STATIC_ROUTE_PATHS.map((routePath) => {
-                // Strip the "/adminpage" prefix so these nest correctly under
-                // the parent <Route path="/adminpage/*"> declared in App.tsx.
-                const relativePath = routePath.replace(ADMIN_ROUTES.ADMIN, "") || "/";
-                return (
-                  <Route
-                    key={routePath}
-                    path={relativePath === "/" ? undefined : relativePath.replace(/^\//, "")}
-                    index={relativePath === "/"}
-                    element={<PlaceholderPage routePath={routePath} />}
-                  />
-                );
-              })}
+  // Strip the "/adminpage" prefix so these nest correctly under
+  // the parent <Route path="/adminpage/*"> declared in App.tsx.
+  const relativePath = routePath.replace(ADMIN_ROUTES.ADMIN, "") || "/";
+  const RealComponent = ADMIN_ROUTE_COMPONENTS[routePath];
+
+  return (
+    <Route
+      key={routePath}
+      path={relativePath === "/" ? undefined : relativePath.replace(/^\//, "")}
+      index={relativePath === "/"}
+      element={RealComponent ? <RealComponent /> : <PlaceholderPage routePath={routePath} />}
+    />
+  );
+})}
 
               <Route
                 path={ADMIN_ROUTES.INVOICE_DRAFT.replace(`${ADMIN_ROUTES.ADMIN}/`, "")}
