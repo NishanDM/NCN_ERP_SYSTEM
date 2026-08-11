@@ -19,6 +19,7 @@ export const CustomerList: React.FC = () => {
     setFormData({ customerCode: '', name: '', phone: '', email: '', creditLimit: 0, creditDays: 30 });
   };
 
+
   return (
     <div className="p-6 space-y-6">
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
