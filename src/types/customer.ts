@@ -8,6 +8,7 @@ export interface Customer {
   creditDays: number;
 }
 
+
 export interface InvoiceItem {
   itemId: string;
   description: string;
