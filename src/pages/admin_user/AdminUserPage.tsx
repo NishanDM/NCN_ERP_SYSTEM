@@ -18,6 +18,7 @@ import AllInvoices from "../../invoices/AllInvoices";
 import CreateNewInvoice from "../../invoices/CreateNewInvoice";
 import InvoiceReports from "../../invoices/InvoiceReports";
 
+<<<<<<< HEAD
 
 //-------------   CUSTOMERS   ------------------------//
 
@@ -26,6 +27,16 @@ import InvoiceReports from "../../invoices/InvoiceReports";
 
 
 
+=======
+import StockItems from "../../stock/StockItems";
+import AddStockItem from "../../stock/AddStockItem";
+import StockCategories from "../../stock/StockCategories";
+import StockReports from "../../stock/StockReports";
+import StockCustomerReturnedItems from "../../stock/StockCustomerReturnedItems";
+
+import AllQuotations from "../../quotations/AllQuotations";
+import QuotationReports from "../../quotations/QuotationReports";
+>>>>>>> 4d04a4a9c0a744abbe2d38352aed864777d019e0
 
 
 import React, { useState } from "react";
@@ -101,6 +112,15 @@ const ADMIN_ROUTE_COMPONENTS: Partial<Record<string, React.ComponentType>> = {
   [ADMIN_ROUTES.INVOICE_ALL]: AllInvoices,
   [ADMIN_ROUTES.INVOICE_NEW]: CreateNewInvoice,
   [ADMIN_ROUTES.INVOICE_REPORTS]: InvoiceReports,
+
+  [ADMIN_ROUTES.STOCK_ITEMS]: StockItems,
+  [ADMIN_ROUTES.STOCK_ADD]: AddStockItem,
+  [ADMIN_ROUTES.STOCK_CATEGORIES]: StockCategories,
+  [ADMIN_ROUTES.STOCK_REPORTS]: StockReports,
+  [ADMIN_ROUTES.CUSTOMER_RETURNED_ITEMS_MANAGEMENT]: StockCustomerReturnedItems,
+
+  [ADMIN_ROUTES.QUOTATION_ALL]: AllQuotations,
+  [ADMIN_ROUTES.QUOTATION_REPORTS]: QuotationReports,
 };
 
 function AdminUserPage() {
