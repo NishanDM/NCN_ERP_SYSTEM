@@ -18,16 +18,8 @@ import AllInvoices from "../../invoices/AllInvoices";
 import CreateNewInvoice from "../../invoices/CreateNewInvoice";
 import InvoiceReports from "../../invoices/InvoiceReports";
 
-<<<<<<< HEAD
-
 //-------------   CUSTOMERS   ------------------------//
 
-
-
-
-
-
-=======
 import StockItems from "../../stock/StockItems";
 import AddStockItem from "../../stock/AddStockItem";
 import StockCategories from "../../stock/StockCategories";
@@ -36,7 +28,7 @@ import StockCustomerReturnedItems from "../../stock/StockCustomerReturnedItems";
 
 import AllQuotations from "../../quotations/AllQuotations";
 import QuotationReports from "../../quotations/QuotationReports";
->>>>>>> 4d04a4a9c0a744abbe2d38352aed864777d019e0
+
 
 
 import React, { useState } from "react";
