@@ -13,10 +13,20 @@
  * they're built — routing, breadcrumbs, and sidebar highlighting all key
  * off adminRouteConfig.ts, so nothing else needs to change.
  */
-
-import AllInvoices from "../../invoices/AllInvoices"; // adjust path to where you place these files
+//-------------   INVOICES   ------------------------//
+import AllInvoices from "../../invoices/AllInvoices"; 
 import CreateNewInvoice from "../../invoices/CreateNewInvoice";
 import InvoiceReports from "../../invoices/InvoiceReports";
+
+
+//-------------   CUSTOMERS   ------------------------//
+
+
+
+
+
+
+
 
 import React, { useState } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
@@ -101,20 +111,20 @@ function AdminUserPage() {
           <AdminLayout>
             <Routes>
               {STATIC_ROUTE_PATHS.map((routePath) => {
-  // Strip the "/adminpage" prefix so these nest correctly under
-  // the parent <Route path="/adminpage/*"> declared in App.tsx.
-  const relativePath = routePath.replace(ADMIN_ROUTES.ADMIN, "") || "/";
-  const RealComponent = ADMIN_ROUTE_COMPONENTS[routePath];
+              // Strip the "/adminpage" prefix so these nest correctly under
+              // the parent <Route path="/adminpage/*"> declared in App.tsx.
+              const relativePath = routePath.replace(ADMIN_ROUTES.ADMIN, "") || "/";
+              const RealComponent = ADMIN_ROUTE_COMPONENTS[routePath];
 
-  return (
-    <Route
-      key={routePath}
-      path={relativePath === "/" ? undefined : relativePath.replace(/^\//, "")}
-      index={relativePath === "/"}
-      element={RealComponent ? <RealComponent /> : <PlaceholderPage routePath={routePath} />}
-    />
-  );
-})}
+              return (
+                <Route
+                  key={routePath}
+                  path={relativePath === "/" ? undefined : relativePath.replace(/^\//, "")}
+                  index={relativePath === "/"}
+                  element={RealComponent ? <RealComponent /> : <PlaceholderPage routePath={routePath} />}
+                />
+              );
+            })}
 
               <Route
                 path={ADMIN_ROUTES.INVOICE_DRAFT.replace(`${ADMIN_ROUTES.ADMIN}/`, "")}
