@@ -18,6 +18,13 @@ import AllInvoices from "../../invoices/AllInvoices"; // adjust path to where yo
 import CreateNewInvoice from "../../invoices/CreateNewInvoice";
 import InvoiceReports from "../../invoices/InvoiceReports";
 
+import AllSuppliers from "../../suppliers/AllSuppliers";
+import SupplierOutstandings from "../../suppliers/SupplierOutstandings";
+import SupplierPaymentsTracking from "../../suppliers/SupplierPaymentsTracking";
+import SupplierDebitNoteManagement from "../../suppliers/SupplierDebitNoteManagement";
+import SupplierSettlements from "../../suppliers/SupplierSettlements";
+import SupplierReports from "../../suppliers/SupplierReports";
+
 import React, { useState } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -91,6 +98,13 @@ const ADMIN_ROUTE_COMPONENTS: Partial<Record<string, React.ComponentType>> = {
   [ADMIN_ROUTES.INVOICE_ALL]: AllInvoices,
   [ADMIN_ROUTES.INVOICE_NEW]: CreateNewInvoice,
   [ADMIN_ROUTES.INVOICE_REPORTS]: InvoiceReports,
+
+  [ADMIN_ROUTES.SUPPLIERS_ALL]: AllSuppliers,
+  [ADMIN_ROUTES.SUPPLIERS_OUTSTANDINGS]: SupplierOutstandings,
+  [ADMIN_ROUTES.SUPPLIERS_PAYMENTS_TRACKING]: SupplierPaymentsTracking,
+  [ADMIN_ROUTES.SUPPLIERS_DEBITNOTE_MANAGEMENT]: SupplierDebitNoteManagement,
+  [ADMIN_ROUTES.SUPPLIERS_SETTLEMENTS]: SupplierSettlements,
+  [ADMIN_ROUTES.SUPPLIERS_REPORTS]: SupplierReports,
 };
 
 function AdminUserPage() {
