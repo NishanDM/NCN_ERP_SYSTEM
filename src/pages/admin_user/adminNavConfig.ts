@@ -83,6 +83,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { sectionId: "reports-customers", label: "Reports", route: ADMIN_ROUTES.CUSTOMERS_REPORTS },
     ],
   },
+  
   {
     id: "stock",
     label: "Stock",
