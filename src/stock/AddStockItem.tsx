@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-import React from 'react'
-=======
 import React, { useState } from "react"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
@@ -186,14 +183,8 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
   const selectedCount = Object.values(selectedFields).filter(Boolean).length
   const allSelected = selectedCount === FIELD_CONFIG.length
   const noneSelected = selectedCount === 0
->>>>>>> Stashed changes
 
-function AddStockItem() {
   return (
-<<<<<<< Updated upstream
-    <div>
-      <h1>Add a New Stock Item Here</h1>
-=======
     <div className="w-full max-w-5xl p-6 lg:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Add New Stock Item</h1>
@@ -401,7 +392,6 @@ function AddStockItem() {
           </form>
         </CardContent>
       </Card>
->>>>>>> Stashed changes
     </div>
   )
 }
