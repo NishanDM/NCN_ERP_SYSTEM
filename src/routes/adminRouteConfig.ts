@@ -25,7 +25,7 @@ import {
   buildReverseSectionMap,
   type DynamicSectionRule,
   type RouteMetadata as RouteMetadataEntry,
-} from "./routeHelpers";
+} from "./routeHelpers"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. ROUTE PATH CONSTANTS
@@ -48,11 +48,13 @@ export const ADMIN_ROUTES = {
   CUSTOMERS_PENDING: "/adminpage/customers/pending",
   CUSTOMERS_PURCHASE_ORDERS: "/adminpage/customers/purchase-orders",
   CUSTOMERS_PURCHASE_ORDERS_NEW: "/adminpage/customers/purchase-orders/new",
-  CUSTOMERS_PURCHASE_ORDERS_EDIT: "/adminpage/customers/purchase-orders/edit/:poId",
+  CUSTOMERS_PURCHASE_ORDERS_EDIT:
+    "/adminpage/customers/purchase-orders/edit/:poId",
   CUSTOMERS_PAYMENTS: "/adminpage/customers/payments",
   CUSTOMERS_CHEQUE_MANAGEMENT: "/adminpage/customers/cheque-management",
   CUSTOMERS_CREDIT_NOTE: "/adminpage/customers/credit-note",
-  CUSTOMERS_CREDIT_NOTE_SETTLEMENTS: "/adminpage/customers/credit-note/settlements",
+  CUSTOMERS_CREDIT_NOTE_SETTLEMENTS:
+    "/adminpage/customers/credit-note/settlements",
   CUSTOMERS_REPORTS: "/adminpage/customers/reports",
 
   // ── Stock ─────────────────────────────────────────────────────────────────
@@ -61,14 +63,17 @@ export const ADMIN_ROUTES = {
   STOCK_ADD: "/adminpage/stock/add",
   STOCK_CATEGORIES: "/adminpage/stock/categories",
   STOCK_REPORTS: "/adminpage/stock/reports",
-  CUSTOMER_RETURNED_ITEMS_MANAGEMENT: "/adminpage/stock/customer-returned-items-management",
+  CUSTOMER_RETURNED_ITEMS_MANAGEMENT:
+    "/adminpage/stock/customer-returned-items-management",
 
   // ── Suppliers ─────────────────────────────────────────────────────────────
   SUPPLIERS: "/adminpage/suppliers",
   SUPPLIERS_ALL: "/adminpage/suppliers/all",
   SUPPLIERS_OUTSTANDINGS: "/adminpage/suppliers/outstandings",
-  SUPPLIERS_PAYMENTS_TRACKING: "/adminpage/suppliers/suppliers-payments-tracking",
-  SUPPLIERS_DEBITNOTE_MANAGEMENT: "/adminpage/suppliers/suppliers-debitnote-management",
+  SUPPLIERS_PAYMENTS_TRACKING:
+    "/adminpage/suppliers/suppliers-payments-tracking",
+  SUPPLIERS_DEBITNOTE_MANAGEMENT:
+    "/adminpage/suppliers/suppliers-debitnote-management",
   SUPPLIERS_SETTLEMENTS: "/adminpage/suppliers/settlements",
   SUPPLIERS_REPORTS: "/adminpage/suppliers/reports",
 
@@ -98,10 +103,10 @@ export const ADMIN_ROUTES = {
 
   // ── Users ─────────────────────────────────────────────────────────────────
   USERS: "/adminpage/users",
-} as const;
+} as const
 
 /** Union type of every valid admin-area route */
-export type AdminRoute = (typeof ADMIN_ROUTES)[keyof typeof ADMIN_ROUTES];
+export type AdminRoute = (typeof ADMIN_ROUTES)[keyof typeof ADMIN_ROUTES]
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. SECTION ID → ROUTE  (Sidebar: navigate(ADMIN_SECTION_TO_ROUTE[sectionId]))
@@ -111,24 +116,15 @@ export const ADMIN_SECTION_TO_ROUTE: Record<string, string> = {
   // Invoice
   "invoice-new": ADMIN_ROUTES.INVOICE_NEW,
   "invoice-all": ADMIN_ROUTES.INVOICE_ALL,
-  "reports-invoice": ADMIN_ROUTES.INVOICE_REPORTS,
-
-  // Customers
-  "customers-all": ADMIN_ROUTES.CUSTOMERS_ALL,
-  "customers-pending": ADMIN_ROUTES.CUSTOMERS_PENDING,
-  "customers-purchase-orders": ADMIN_ROUTES.CUSTOMERS_PURCHASE_ORDERS,
-  "customers-payments": ADMIN_ROUTES.CUSTOMERS_PAYMENTS,
-  "customers-cheque-management": ADMIN_ROUTES.CUSTOMERS_CHEQUE_MANAGEMENT,
-  "customers-credit-note": ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE,
-  "customers-credit-note-settlements": ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE_SETTLEMENTS,
-  "reports-customers": ADMIN_ROUTES.CUSTOMERS_REPORTS,
+  "reports-invoice": ADMIN_ROUTES.INVOICE_REPORTS,        
 
   // Stock
   "stock-items": ADMIN_ROUTES.STOCK_ITEMS,
   "stock-add": ADMIN_ROUTES.STOCK_ADD,
   "stock-categories": ADMIN_ROUTES.STOCK_CATEGORIES,
   "reports-stock": ADMIN_ROUTES.STOCK_REPORTS,
-  "customer-returned-items-management": ADMIN_ROUTES.CUSTOMER_RETURNED_ITEMS_MANAGEMENT,
+  "customer-returned-items-management":
+    ADMIN_ROUTES.CUSTOMER_RETURNED_ITEMS_MANAGEMENT,
 
   // Suppliers
   "suppliers-all": ADMIN_ROUTES.SUPPLIERS_ALL,
@@ -160,22 +156,25 @@ export const ADMIN_SECTION_TO_ROUTE: Record<string, string> = {
 
   // Users
   "user-management": ADMIN_ROUTES.USERS,
-};
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. ROUTE → SECTION ID  (Sidebar: highlight ADMIN_ROUTE_TO_SECTION[pathname])
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ADMIN_ROUTE_TO_SECTION: Record<string, string> =
-  buildReverseSectionMap(ADMIN_SECTION_TO_ROUTE);
+  buildReverseSectionMap(ADMIN_SECTION_TO_ROUTE)
 
 /** Paths with a dynamic segment (`:invoiceId`, `:poId`, ...) don't have an
  *  exact entry in ADMIN_ROUTE_TO_SECTION, so they're resolved by prefix here
  *  instead — pointing back at whichever "all" list they were opened from. */
 const ADMIN_DYNAMIC_SECTION_RULES: DynamicSectionRule[] = [
   { pathPrefix: "/adminpage/invoice/draft", sectionId: "invoice-all" },
-  { pathPrefix: "/adminpage/customers/purchase-orders/edit", sectionId: "customers-purchase-orders" },
-];
+  {
+    pathPrefix: "/adminpage/customers/purchase-orders/edit",
+    sectionId: "customers-purchase-orders",
+  },
+]
 
 /**
  * Given the current pathname, returns the matching sidebar section id.
@@ -188,7 +187,7 @@ export const getActiveSectionFromAdminPath = createActiveSectionResolver(
   ADMIN_ROUTE_TO_SECTION,
   "accounts-dashboard",
   ADMIN_DYNAMIC_SECTION_RULES
-);
+)
 
 /**
  * Given a sidebar section id, returns that section's parent accordion/menu id.
@@ -200,7 +199,18 @@ export const getActiveSectionFromAdminPath = createActiveSectionResolver(
  *   );
  */
 export const getParentMenuFromAdminSection = createParentMenuResolver(
-  ["invoice", "customers", "stock", "suppliers", "accounts", "po-grn", "sales-rep", "quotation", "reports", "user"],
+  [
+    "invoice",
+    "customers",
+    "stock",
+    "suppliers",
+    "accounts",
+    "po-grn",
+    "sales-rep",
+    "quotation",
+    "reports",
+    "user",
+  ],
   {
     "mileage-management": "sales-rep",
     "sales-rep-expenses": "sales-rep",
@@ -211,7 +221,7 @@ export const getParentMenuFromAdminSection = createParentMenuResolver(
     "reports-po-grn": "po-grn",
     "user-management": "user-management", // leaf-level menu, no accordion
   }
-);
+)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. ROUTE METADATA  (breadcrumbs, <title>, navigation helpers)
@@ -222,65 +232,164 @@ export const ADMIN_ROUTE_METADATA: Record<string, RouteMetadataEntry> = {
 
   // ── Invoice ───────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.INVOICE]: { label: "Invoice", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.INVOICE_NEW]: { label: "New Invoice", parent: ADMIN_ROUTES.INVOICE },
-  [ADMIN_ROUTES.INVOICE_ALL]: { label: "All Invoices", parent: ADMIN_ROUTES.INVOICE },
-  [ADMIN_ROUTES.INVOICE_REPORTS]: { label: "Invoice Reports", parent: ADMIN_ROUTES.INVOICE },
+  [ADMIN_ROUTES.INVOICE_NEW]: {
+    label: "New Invoice",
+    parent: ADMIN_ROUTES.INVOICE,
+  },
+  [ADMIN_ROUTES.INVOICE_ALL]: {
+    label: "All Invoices",
+    parent: ADMIN_ROUTES.INVOICE,
+  },
+  [ADMIN_ROUTES.INVOICE_REPORTS]: {
+    label: "Invoice Reports",
+    parent: ADMIN_ROUTES.INVOICE,
+  },
 
   // ── Customers ─────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.CUSTOMERS]: { label: "Customers", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.CUSTOMERS_ALL]: { label: "All Customers", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_PENDING]: { label: "Pending Customers", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_PURCHASE_ORDERS]: { label: "Customer Purchase Orders", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_PAYMENTS]: { label: "Customer Payments", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_CHEQUE_MANAGEMENT]: { label: "Cheque Management", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE]: { label: "Credit Notes", parent: ADMIN_ROUTES.CUSTOMERS },
-  [ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE_SETTLEMENTS]: { label: "Credit Note Settlements", parent: ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE },
-  [ADMIN_ROUTES.CUSTOMERS_REPORTS]: { label: "Customer Reports", parent: ADMIN_ROUTES.CUSTOMERS },
+  [ADMIN_ROUTES.CUSTOMERS_ALL]: {
+    label: "All Customers",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_PENDING]: {
+    label: "Pending Customers",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_PURCHASE_ORDERS]: {
+    label: "Customer Purchase Orders",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_PAYMENTS]: {
+    label: "Customer Payments",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_CHEQUE_MANAGEMENT]: {
+    label: "Cheque Management",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE]: {
+    label: "Credit Notes",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE_SETTLEMENTS]: {
+    label: "Credit Note Settlements",
+    parent: ADMIN_ROUTES.CUSTOMERS_CREDIT_NOTE,
+  },
+  [ADMIN_ROUTES.CUSTOMERS_REPORTS]: {
+    label: "Customer Reports",
+    parent: ADMIN_ROUTES.CUSTOMERS,
+  },
 
   // ── Stock ─────────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.STOCK]: { label: "Stock", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.STOCK_ITEMS]: { label: "Stock Items", parent: ADMIN_ROUTES.STOCK },
-  [ADMIN_ROUTES.STOCK_ADD]: { label: "Add Stock Item", parent: ADMIN_ROUTES.STOCK },
-  [ADMIN_ROUTES.STOCK_CATEGORIES]: { label: "Categories", parent: ADMIN_ROUTES.STOCK },
-  [ADMIN_ROUTES.STOCK_REPORTS]: { label: "Stock Reports", parent: ADMIN_ROUTES.STOCK },
-  [ADMIN_ROUTES.CUSTOMER_RETURNED_ITEMS_MANAGEMENT]: { label: "Customer Returned Items", parent: ADMIN_ROUTES.STOCK },
+  [ADMIN_ROUTES.STOCK_ITEMS]: {
+    label: "Stock Items",
+    parent: ADMIN_ROUTES.STOCK,
+  },
+  [ADMIN_ROUTES.STOCK_ADD]: {
+    label: "Add Stock Item",
+    parent: ADMIN_ROUTES.STOCK,
+  },
+  [ADMIN_ROUTES.STOCK_CATEGORIES]: {
+    label: "Categories",
+    parent: ADMIN_ROUTES.STOCK,
+  },
+  [ADMIN_ROUTES.STOCK_REPORTS]: {
+    label: "Stock Reports",
+    parent: ADMIN_ROUTES.STOCK,
+  },
+  [ADMIN_ROUTES.CUSTOMER_RETURNED_ITEMS_MANAGEMENT]: {
+    label: "Customer Returned Items",
+    parent: ADMIN_ROUTES.STOCK,
+  },
 
   // ── Suppliers ─────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.SUPPLIERS]: { label: "Suppliers", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.SUPPLIERS_ALL]: { label: "All Suppliers", parent: ADMIN_ROUTES.SUPPLIERS },
-  [ADMIN_ROUTES.SUPPLIERS_OUTSTANDINGS]: { label: "Supplier Outstandings", parent: ADMIN_ROUTES.SUPPLIERS },
-  [ADMIN_ROUTES.SUPPLIERS_PAYMENTS_TRACKING]: { label: "Supplier Payments Tracking", parent: ADMIN_ROUTES.SUPPLIERS },
-  [ADMIN_ROUTES.SUPPLIERS_DEBITNOTE_MANAGEMENT]: { label: "Supplier Debit Notes", parent: ADMIN_ROUTES.SUPPLIERS },
-  [ADMIN_ROUTES.SUPPLIERS_SETTLEMENTS]: { label: "Supplier Settlements", parent: ADMIN_ROUTES.SUPPLIERS },
-  [ADMIN_ROUTES.SUPPLIERS_REPORTS]: { label: "Supplier Reports", parent: ADMIN_ROUTES.SUPPLIERS },
+  [ADMIN_ROUTES.SUPPLIERS_ALL]: {
+    label: "All Suppliers",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
+  [ADMIN_ROUTES.SUPPLIERS_OUTSTANDINGS]: {
+    label: "Supplier Outstandings",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
+  [ADMIN_ROUTES.SUPPLIERS_PAYMENTS_TRACKING]: {
+    label: "Supplier Payments Tracking",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
+  [ADMIN_ROUTES.SUPPLIERS_DEBITNOTE_MANAGEMENT]: {
+    label: "Supplier Debit Notes",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
+  [ADMIN_ROUTES.SUPPLIERS_SETTLEMENTS]: {
+    label: "Supplier Settlements",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
+  [ADMIN_ROUTES.SUPPLIERS_REPORTS]: {
+    label: "Supplier Reports",
+    parent: ADMIN_ROUTES.SUPPLIERS,
+  },
 
   // ── Accounts ──────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.ACCOUNTS]: { label: "Accounts", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.ACCOUNTS_DASHBOARD]: { label: "Accounts Dashboard", parent: ADMIN_ROUTES.ACCOUNTS },
-  [ADMIN_ROUTES.ACCOUNTS_EXPENSES]: { label: "Expenses", parent: ADMIN_ROUTES.ACCOUNTS },
-  [ADMIN_ROUTES.ACCOUNTS_REPORTS]: { label: "Accounts Reports", parent: ADMIN_ROUTES.ACCOUNTS },
+  [ADMIN_ROUTES.ACCOUNTS_DASHBOARD]: {
+    label: "Accounts Dashboard",
+    parent: ADMIN_ROUTES.ACCOUNTS,
+  },
+  [ADMIN_ROUTES.ACCOUNTS_EXPENSES]: {
+    label: "Expenses",
+    parent: ADMIN_ROUTES.ACCOUNTS,
+  },
+  [ADMIN_ROUTES.ACCOUNTS_REPORTS]: {
+    label: "Accounts Reports",
+    parent: ADMIN_ROUTES.ACCOUNTS,
+  },
 
   // ── PO & GRN ──────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.PO_GRN]: { label: "PO & GRN", parent: ADMIN_ROUTES.ADMIN },
   [ADMIN_ROUTES.PO]: { label: "Purchase Orders", parent: ADMIN_ROUTES.PO_GRN },
-  [ADMIN_ROUTES.GRN]: { label: "Goods Received Notes", parent: ADMIN_ROUTES.PO_GRN },
+  [ADMIN_ROUTES.GRN]: {
+    label: "Goods Received Notes",
+    parent: ADMIN_ROUTES.PO_GRN,
+  },
   [ADMIN_ROUTES.GRN_NEW]: { label: "New GRN", parent: ADMIN_ROUTES.GRN },
-  [ADMIN_ROUTES.GRN_SETTLEMENT]: { label: "GRN Settlement", parent: ADMIN_ROUTES.PO_GRN },
-  [ADMIN_ROUTES.GRN_REPORTS]: { label: "PO & GRN Reports", parent: ADMIN_ROUTES.PO_GRN },
+  [ADMIN_ROUTES.GRN_SETTLEMENT]: {
+    label: "GRN Settlement",
+    parent: ADMIN_ROUTES.PO_GRN,
+  },
+  [ADMIN_ROUTES.GRN_REPORTS]: {
+    label: "PO & GRN Reports",
+    parent: ADMIN_ROUTES.PO_GRN,
+  },
 
   // ── Sales Rep ─────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.SALES_REP]: { label: "Sales Rep", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.SALES_REP_MILEAGE]: { label: "Mileage", parent: ADMIN_ROUTES.SALES_REP },
-  [ADMIN_ROUTES.SALES_REP_EXPENSES]: { label: "Sales Rep Expenses", parent: ADMIN_ROUTES.SALES_REP },
+  [ADMIN_ROUTES.SALES_REP_MILEAGE]: {
+    label: "Mileage",
+    parent: ADMIN_ROUTES.SALES_REP,
+  },
+  [ADMIN_ROUTES.SALES_REP_EXPENSES]: {
+    label: "Sales Rep Expenses",
+    parent: ADMIN_ROUTES.SALES_REP,
+  },
 
   // ── Quotation ─────────────────────────────────────────────────────────────
   [ADMIN_ROUTES.QUOTATION]: { label: "Quotation", parent: ADMIN_ROUTES.ADMIN },
-  [ADMIN_ROUTES.QUOTATION_ALL]: { label: "All Quotations", parent: ADMIN_ROUTES.QUOTATION },
-  [ADMIN_ROUTES.QUOTATION_REPORTS]: { label: "Quotation Reports", parent: ADMIN_ROUTES.QUOTATION },
+  [ADMIN_ROUTES.QUOTATION_ALL]: {
+    label: "All Quotations",
+    parent: ADMIN_ROUTES.QUOTATION,
+  },
+  [ADMIN_ROUTES.QUOTATION_REPORTS]: {
+    label: "Quotation Reports",
+    parent: ADMIN_ROUTES.QUOTATION,
+  },
 
   // ── Users ─────────────────────────────────────────────────────────────────
-  [ADMIN_ROUTES.USERS]: { label: "User Management", parent: ADMIN_ROUTES.ADMIN },
-};
+  [ADMIN_ROUTES.USERS]: {
+    label: "User Management",
+    parent: ADMIN_ROUTES.ADMIN,
+  },
+}
 
 /**
  * Build a breadcrumb trail for the given pathname.
@@ -291,7 +400,8 @@ export const ADMIN_ROUTE_METADATA: Record<string, RouteMetadataEntry> = {
  *   //    { label: "Customers", path: "/adminpage/customers" },
  *   //    { label: "All Customers", path: "/adminpage/customers/all" }]
  */
-export const buildAdminBreadcrumbs = createBreadcrumbBuilder(ADMIN_ROUTE_METADATA);
+export const buildAdminBreadcrumbs =
+  createBreadcrumbBuilder(ADMIN_ROUTE_METADATA)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Dynamic-segment route builders
@@ -299,10 +409,10 @@ export const buildAdminBreadcrumbs = createBreadcrumbBuilder(ADMIN_ROUTE_METADAT
 
 /** Build a navigable URL for a specific draft invoice. */
 export function adminInvoiceDraftRoute(invoiceId: string): string {
-  return `/adminpage/invoice/draft/${invoiceId}`;
+  return `/adminpage/invoice/draft/${invoiceId}`
 }
 
 /** Build a navigable URL for editing a specific customer purchase order. */
 export function adminCustomerPurchaseOrderEditRoute(poId: string): string {
-  return `/adminpage/customers/purchase-orders/edit/${poId}`;
+  return `/adminpage/customers/purchase-orders/edit/${poId}`
 }
