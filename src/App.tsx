@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 
 import LoginPage from "./pages/login_page/LoginPage";
 import AdminUserPage from "./pages/admin_user/AdminUserPage";
@@ -30,6 +31,8 @@ function App() {
         {/* Anything unmatched falls back to login */}
         <Route path="*" element={<Navigate to={SHARED_ROUTES.LOGIN} replace />} />
       </Routes>
+
+        <Toaster richColors position="top-right" />
     </BrowserRouter>
   );
 }
