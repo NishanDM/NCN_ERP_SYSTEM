@@ -16,6 +16,12 @@ import {
   FieldSet,
 } from "@/components/ui/field"
 
+
+
+//==========    COMPONENTS ===========================
+
+import AddCustomAttributesPopup from "./AddCustomAttributesPopup"
+
 // ---- Types ----------------------------------------------------------------
 
 export interface StockItem {
@@ -115,6 +121,9 @@ interface AddStockItemProps {
 }
 
 function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
+
+  const [openCustomAttributesPopup, setOpenCustomAttributesPopup] = useState();
+
   const [selectedFields, setSelectedFields] = useState<Record<FieldKey, boolean>>(
     DEFAULT_SELECTED_FIELDS
   )
@@ -278,6 +287,15 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
             </FieldSet>
 
             <div className="h-px bg-border" />
+
+            <div className="flex justify-left gap-3  border-border mt-2">
+              <Button type="button" variant="outline">
+                Add Custom Attributes
+              </Button>
+              <Button >
+                Refresh
+              </Button>
+            </div>
 
             {/* --- Form fields for selected attributes, grouped by section --- */}
             {noneSelected ? (
