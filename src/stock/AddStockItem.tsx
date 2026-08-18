@@ -305,6 +305,15 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
             <div className="h-px bg-border" />
 
+            <div className="flex justify-left gap-3  border-border mt-2">
+              <Button type="button" variant="outline">
+                Add Custom Attributes
+              </Button>
+              <Button >
+                Refresh
+              </Button>
+            </div>
+
             {/* --- Form fields for selected attributes, grouped by section --- */}
             {noneSelected ? (
               <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
