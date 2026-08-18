@@ -212,10 +212,29 @@ const ScrollbarStyles = () => (
 interface AddCustomAttributesPopupProps {
   /** Fires with the chosen attributes when the user clicks "Add Attributes". */
   onAddAttributes?: (attributes: CustomAttribute[]) => void
+  /** Controlled open state (optional — falls back to internal state if omitted) */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  /** Hide the built-in trigger button when you're opening this from elsewhere */
+  hideTrigger?: boolean
 }
 
-function AddCustomAttributesPopup({ onAddAttributes }: AddCustomAttributesPopupProps) {
-  const [open, setOpen] = useState(false)
+function AddCustomAttributesPopup({
+  onAddAttributes,
+  open: openProp,
+  onOpenChange,
+  hideTrigger,
+}: AddCustomAttributesPopupProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  // Use the controlled value if provided, otherwise fall back to internal state
+  const isControlled = openProp !== undefined
+  const open = isControlled ? openProp : internalOpen
+  const setOpen = (next: boolean) => {
+    if (onOpenChange) onOpenChange(next)
+    if (!isControlled) setInternalOpen(next)
+  }
+
   const [selectedFields, setSelectedFields] = useState<Record<AttributeKey, boolean>>(
     DEFAULT_SELECTED_FIELDS
   )

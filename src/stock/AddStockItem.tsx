@@ -126,7 +126,7 @@ interface AddStockItemProps {
 function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
   const [customAttributes, setCustomAttributes] = useState<CustomAttribute[]>([])
-
+  const [customAttributesOpen, setCustomAttributesOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<Record<FieldKey, boolean>>(
     DEFAULT_SELECTED_FIELDS
   )
@@ -212,7 +212,7 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
   const noneSelected = selectedCount === 0
 
   return (
-    <div className="w-full max-w-5xl p-6 lg:p-8">
+    <div className="w-full max-w-7xl p-6 lg:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Add New Stock Item</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -304,6 +304,19 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
             </FieldSet>
 
             <div className="h-px bg-border" />
+
+<div className="flex justify-left gap-3 pt-6">
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => setCustomAttributesOpen(true)}
+  >
+    Add Custom Attributes
+  </Button>
+  <Button onClick={handleRefresh}>
+    Refresh
+  </Button>
+</div>
 
             {/* --- Form fields for selected attributes, grouped by section --- */}
             {noneSelected ? (
@@ -437,6 +450,14 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
           </form>
         </CardContent>
       </Card>
+
+<AddCustomAttributesPopup
+  onAddAttributes={handleAddCustomAttributes}
+  open={customAttributesOpen}
+  onOpenChange={setCustomAttributesOpen}
+  hideTrigger
+/>
+
     </div>
   )
 }
