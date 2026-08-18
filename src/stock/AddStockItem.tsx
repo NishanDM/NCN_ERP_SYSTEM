@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { toast } from "sonner"
+import { RotateCcw, PackagePlus } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -20,7 +21,9 @@ import {
 
 //==========    COMPONENTS ===========================
 
-import AddCustomAttributesPopup from "./AddCustomAttributesPopup"
+import AddCustomAttributesPopup, {
+  type CustomAttribute,
+} from "./AddCustomAttributesPopup"
 
 // ---- Types ----------------------------------------------------------------
 
@@ -116,13 +119,13 @@ const DEFAULT_SELECTED_FIELDS: Record<FieldKey, boolean> = {
 // ---- Component --------------------------------------------------------------
 
 interface AddStockItemProps {
-  onSubmit?: (item: Partial<StockItem>) => void
+  onSubmit?: (item: Partial<StockItem>, customAttributes: CustomAttribute[]) => void
   onCancel?: () => void
 }
 
 function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
-  const [openCustomAttributesPopup, setOpenCustomAttributesPopup] = useState();
+  const [customAttributes, setCustomAttributes] = useState<CustomAttribute[]>([])
 
   const [selectedFields, setSelectedFields] = useState<Record<FieldKey, boolean>>(
     DEFAULT_SELECTED_FIELDS
@@ -155,6 +158,19 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
     })
   }
 
+  const handleRefresh = () => {
+    setSelectedFields(DEFAULT_SELECTED_FIELDS)
+    setFormData(DEFAULT_VALUES)
+    setCustomAttributes([])
+    toast("Form cleared", {
+      description: "All fields have been reset to their defaults.",
+    })
+  }
+
+  const handleAddCustomAttributes = (attributes: CustomAttribute[]) => {
+    setCustomAttributes(attributes)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -175,8 +191,9 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
       }
     })
 
-    onSubmit?.(item)
+    onSubmit?.(item, customAttributes)
     console.log("New stock item:", item)
+    console.log("Custom attributes:", customAttributes)
 
     // Frontend-only for now — no API call yet, so we simulate a successful
     // save with a toast and reset the form back to its default state.
@@ -187,6 +204,7 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
     setFormData(DEFAULT_VALUES)
     setSelectedFields(DEFAULT_SELECTED_FIELDS)
+    setCustomAttributes([])
   }
 
   const selectedCount = Object.values(selectedFields).filter(Boolean).length
@@ -206,7 +224,6 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
       <Card className="border-border/60 bg-card/50">
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            {/* --- Attribute selector: horizontal, wrapping chip layout --- */}
             <FieldSet>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -287,15 +304,6 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
             </FieldSet>
 
             <div className="h-px bg-border" />
-
-            <div className="flex justify-left gap-3  border-border mt-2">
-              <Button type="button" variant="outline">
-                Add Custom Attributes
-              </Button>
-              <Button >
-                Refresh
-              </Button>
-            </div>
 
             {/* --- Form fields for selected attributes, grouped by section --- */}
             {noneSelected ? (
@@ -398,6 +406,25 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
                 })}
               </div>
             )}
+
+            <div className="h-px bg-border" />
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="button" variant="outline" onClick={handleRefresh}>
+                <RotateCcw />
+                Refresh
+              </Button>
+
+              <AddCustomAttributesPopup onAddAttributes={handleAddCustomAttributes} />
+
+              {customAttributes.length > 0 && (
+                <Badge variant="secondary" className="font-normal">
+                  <PackagePlus className="size-3" />
+                  {customAttributes.length} custom attribute
+                  {customAttributes.length > 1 ? "s" : ""} added
+                </Badge>
+              )}
+            </div>
 
             <div className="flex justify-end gap-3 border-t border-border pt-6">
               <Button type="button" variant="outline" onClick={onCancel}>
