@@ -323,9 +323,9 @@ function AddCustomAttributesPopup({ onAddAttributes }: AddCustomAttributesPopupP
         <DialogHeader>
           <DialogTitle>Add Custom Attributes</DialogTitle>
           <DialogDescription>
-            Pick the extra attributes this item needs and fill in their
-            values. Only electronics need IMEI, only textiles need Material —
-            choose whatever applies here.
+            Choose the extra details that apply to this item, then fill them in.
+            For example, add an IMEI number for electronics or a Material
+            type for clothing. just pick what makes sense for this item.
           </DialogDescription>
         </DialogHeader>
 
@@ -367,7 +367,7 @@ function AddCustomAttributesPopup({ onAddAttributes }: AddCustomAttributesPopupP
               </div>
             </div>
             <FieldDescription>
-              Tick anything relevant to this item. Nothing here is required.
+              Tick anything relevant to this item. You can leave all of them unchecked if you prefer.
             </FieldDescription>
 
             <div
@@ -420,8 +420,8 @@ function AddCustomAttributesPopup({ onAddAttributes }: AddCustomAttributesPopupP
             <div className="flex flex-col gap-6 pb-1">
               {noneSelected ? (
                 <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                  Nothing is chosen yet. Choose at least one attribute above to
-                  start filling in values.
+                  Nothing is chosen yet. Choose at least one from the list above to
+                  start entering its details.
                 </p>
               ) : (
                 <div className="flex flex-col gap-6">
