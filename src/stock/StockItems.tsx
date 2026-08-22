@@ -802,7 +802,7 @@ function StockItems() {
                           type="button"
                           onClick={() => handleCopy(item.stockKeepingUnit, "SKU")}
                           className="group inline-flex items-center gap-1.5 hover:text-foreground"
-                          title="Copy part number"
+                          title="Copy SKU"
                         >
                           {item.stockKeepingUnit}
                           <Copy className="size-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
