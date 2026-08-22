@@ -207,9 +207,9 @@ function StockItemPopup({
   const validate = (): boolean => {
     const nextErrors: FormErrors = {}
 
-    if (!form.itemName.trim()) nextErrors.itemName = "Description is required"
+    if (!form.itemName.trim()) nextErrors.itemName = "Item Name is required"
     if (!form.brand.trim()) nextErrors.brand = "Brand is required"
-    if (!form.stockKeepingUnit.trim()) nextErrors.stockKeepingUnit = "Part number is required"
+    if (!form.stockKeepingUnit.trim()) nextErrors.stockKeepingUnit = "SKU is required"
     if (!form.supplierName.trim()) nextErrors.supplierName = "Supplier is required"
     if (!form.categoryName) nextErrors.categoryName = "Category is required"
     if (!form.subCategoryName) nextErrors.subCategoryName = "Sub-category is required"
@@ -270,7 +270,7 @@ function StockItemPopup({
 
           <div className="grid max-h-[65vh] grid-cols-1 gap-4 overflow-y-auto py-4 sm:grid-cols-2">
             <Field className="sm:col-span-2">
-              <FieldLabel htmlFor="edit-item-description">Item Name</FieldLabel>
+              <FieldLabel htmlFor="edit-item-name">Item Name</FieldLabel>
               <Input
                 id="edit-item-description"
                 autoFocus
