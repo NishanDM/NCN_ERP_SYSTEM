@@ -16,13 +16,19 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field"
-
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 //==========    COMPONENTS ===========================
 
 import AddCustomAttributesPopup, {
-  type CustomAttribute,
+  type CustomAttributeDefinition,
+  type CustomAttributeValue,
 } from "./AddCustomAttributesPopup"
 
 // ---- Types ----------------------------------------------------------------
@@ -119,18 +125,20 @@ const DEFAULT_SELECTED_FIELDS: Record<FieldKey, boolean> = {
 // ---- Component --------------------------------------------------------------
 
 interface AddStockItemProps {
-  onSubmit?: (item: Partial<StockItem>, customAttributes: CustomAttribute[]) => void
+  onSubmit?: (item: Partial<StockItem>, customAttributes: CustomAttributeValue[]) => void
   onCancel?: () => void
 }
 
 function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
-
-  const [customAttributes, setCustomAttributes] = useState<CustomAttribute[]>([])
-
   const [selectedFields, setSelectedFields] = useState<Record<FieldKey, boolean>>(
     DEFAULT_SELECTED_FIELDS
   )
   const [formData, setFormData] = useState<StockItem>(DEFAULT_VALUES)
+
+  const [customAttributeDefs, setCustomAttributeDefs] = useState<CustomAttributeDefinition[]>([])
+  const [customAttributeValues, setCustomAttributeValues] = useState <Record<string, string | number | boolean>
+  >({})
+  const [customAttributesOpen, setCustomAttributesOpen] = useState(false)
 
   const toggleFieldSelection = (key: FieldKey, checked: boolean) => {
     const field = FIELD_CONFIG.find((f) => f.key === key)
@@ -158,25 +166,68 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
     })
   }
 
-  const handleRefresh = () => {
-    setSelectedFields(DEFAULT_SELECTED_FIELDS)
-    setFormData(DEFAULT_VALUES)
-    setCustomAttributes([])
-    toast("Form cleared", {
-      description: "All fields have been reset to their defaults.",
+  // ---- Custom attribute handlers -------------------------------------------
+
+  const handleCreateCustomAttribute = (definition: CustomAttributeDefinition) => {
+    setCustomAttributeDefs((prev) => [...prev, definition])
+    setCustomAttributeValues((prev) => ({
+      ...prev,
+      [definition.key]: definition.dataType === "boolean" ? false : "",
+    }))
+  }
+
+  const updateCustomAttributeValue = (key: string, value: string | number | boolean) => {
+    setCustomAttributeValues((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const removeCustomAttribute = (key: string) => {
+    setCustomAttributeDefs((prev) => prev.filter((d) => d.key !== key))
+    setCustomAttributeValues((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
     })
   }
 
-  const handleAddCustomAttributes = (attributes: CustomAttribute[]) => {
-    setCustomAttributes(attributes)
+  const getMissingRequiredCustomAttributes = (): CustomAttributeDefinition[] => {
+    return customAttributeDefs.filter((def) => {
+      if (!def.isRequired) return false
+      const value = customAttributeValues[def.key]
+      return typeof value !== "boolean" && String(value ?? "").trim() === ""
+    })
+  }
+
+  const existingAttributeKeys = [
+    ...FIELD_CONFIG.map((f) => f.key),
+    ...customAttributeDefs.map((d) => d.key),
+  ]
+  const existingAttributeLabels = [
+    ...FIELD_CONFIG.map((f) => f.label),
+    ...customAttributeDefs.map((d) => d.label),
+  ]
+
+  // ---- Form-level handlers --------------------------------------------------
+
+  const handleRefresh = () => {
+    setSelectedFields(DEFAULT_SELECTED_FIELDS)
+    setFormData(DEFAULT_VALUES)
+    setCustomAttributeDefs([])
+    setCustomAttributeValues({})
+    toast("Form cleared", {
+      description: "All fields have been reset to their defaults.",
+    })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     const missingFields = getMissingRequiredFields()
-    if (missingFields.length > 0) {
-      const missingLabels = missingFields.map((field) => field.label).join(", ")
+    const missingCustom = getMissingRequiredCustomAttributes()
+    if (missingFields.length > 0 || missingCustom.length > 0) {
+      const missingLabels = [
+        ...missingFields.map((f) => f.label),
+        ...missingCustom.map((d) => d.label),
+      ].join(", ")
       toast.error("Please fill in the required fields", {
         description: `Missing: ${missingLabels}`,
       })
@@ -191,9 +242,20 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
       }
     })
 
-    onSubmit?.(item, customAttributes)
+    const customAttributesForSubmit: CustomAttributeValue[] = customAttributeDefs.map((def) => ({
+      key: def.key,
+      label: def.label,
+      value:
+        def.dataType === "boolean"
+          ? customAttributeValues[def.key]
+            ? "Yes"
+            : "No"
+          : String(customAttributeValues[def.key] ?? ""),
+    }))
+
+    onSubmit?.(item, customAttributesForSubmit)
     console.log("New stock item:", item)
-    console.log("Custom attributes:", customAttributes)
+    console.log("Custom attributes:", customAttributesForSubmit)
 
     // Frontend-only for now — no API call yet, so we simulate a successful
     // save with a toast and reset the form back to its default state.
@@ -204,7 +266,8 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
     setFormData(DEFAULT_VALUES)
     setSelectedFields(DEFAULT_SELECTED_FIELDS)
-    setCustomAttributes([])
+    setCustomAttributeDefs([])
+    setCustomAttributeValues({})
   }
 
   const selectedCount = Object.values(selectedFields).filter(Boolean).length
@@ -212,7 +275,7 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
   const noneSelected = selectedCount === 0
 
   return (
-    <div className="w-full max-w-5xl p-6 lg:p-8">
+    <div className="w-full max-w-7xl p-6 lg:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Add New Stock Item</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -305,8 +368,30 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
 
             <div className="h-px bg-border" />
 
+            <div className="flex justify-start gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCustomAttributesOpen(true)}
+              >
+                <PackagePlus />
+                Add Custom Attribute
+              </Button>
+              <Button type="button" variant="outline" onClick={handleRefresh}>
+                <RotateCcw />
+                Refresh
+              </Button>
+              {customAttributeDefs.length > 0 && (
+                <Badge variant="secondary" className="font-normal">
+                  <PackagePlus className="size-3" />
+                  {customAttributeDefs.length} custom attribute
+                  {customAttributeDefs.length > 1 ? "s" : ""} added
+                </Badge>
+              )}
+            </div>
+
             {/* --- Form fields for selected attributes, grouped by section --- */}
-            {noneSelected ? (
+            {noneSelected && customAttributeDefs.length === 0 ? (
               <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
                 Nothing is chosen yet. Choose at least one above to start
                 filling in details.
@@ -404,27 +489,118 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
                     </FieldSet>
                   )
                 })}
+
+                {/* --- Custom attributes created via AddCustomAttributesPopup --- */}
+                {customAttributeDefs.length > 0 && (
+                  <FieldSet>
+                    <FieldLegend
+                      variant="label"
+                      className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                    >
+                      Custom Attributes
+                    </FieldLegend>
+                    <div className="grid grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-2">
+                      {customAttributeDefs.map((def) => {
+                        const spanFull = def.dataType === "boolean"
+                        return (
+                          <Field
+                            key={def.key}
+                            className={spanFull ? "sm:col-span-2" : undefined}
+                          >
+                            {def.dataType === "boolean" ? (
+                              <Field orientation="horizontal">
+                                <Checkbox
+                                  id={`custom-attr-${def.key}`}
+                                  checked={Boolean(customAttributeValues[def.key])}
+                                  onCheckedChange={(checked) =>
+                                    updateCustomAttributeValue(def.key, checked === true)
+                                  }
+                                />
+                                <FieldLabel
+                                  htmlFor={`custom-attr-${def.key}`}
+                                  className="font-normal"
+                                >
+                                  {def.label}
+                                </FieldLabel>
+                              </Field>
+                            ) : (
+                              <>
+                                <FieldLabel htmlFor={`custom-attr-${def.key}`}>
+                                  {def.label}
+                                  {def.isRequired && (
+                                    <span className="ml-0.5 text-destructive">*</span>
+                                  )}
+                                  {def.unit && (
+                                    <span className="ml-1 text-xs text-muted-foreground">
+                                      ({def.unit})
+                                    </span>
+                                  )}
+                                </FieldLabel>
+                                {def.dataType === "select" ? (
+                                  <Select
+                                    value={(customAttributeValues[def.key] as string) || undefined}
+                                    onValueChange={(value) =>
+                                      updateCustomAttributeValue(def.key, value)
+                                    }
+                                  >
+                                    <SelectTrigger id={`custom-attr-${def.key}`} className="w-full">
+                                      <SelectValue
+                                        placeholder={`Select ${def.label.toLowerCase()}`}
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {def.options?.map((opt) => (
+                                        <SelectItem key={opt} value={opt}>
+                                          {opt}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : (
+                                  <Input
+                                    id={`custom-attr-${def.key}`}
+                                    type={
+                                      def.dataType === "number"
+                                        ? "number"
+                                        : def.dataType === "date"
+                                          ? "date"
+                                          : "text"
+                                    }
+                                    value={(customAttributeValues[def.key] as string | number) ?? ""}
+                                    onChange={(e) =>
+                                      updateCustomAttributeValue(
+                                        def.key,
+                                        def.dataType === "number"
+                                          ? Number(e.target.value)
+                                          : e.target.value
+                                      )
+                                    }
+                                  />
+                                )}
+                              </>
+                            )}
+                            {def.helpText && (
+                              <FieldDescription>{def.helpText}</FieldDescription>
+                            )}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto w-fit justify-start p-0 text-xs text-muted-foreground"
+                              onClick={() => removeCustomAttribute(def.key)}
+                            >
+                              Remove attribute
+                            </Button>
+                          </Field>
+                        )
+                      })}
+                    </div>
+                  </FieldSet>
+                )}
               </div>
             )}
 
             <div className="h-px bg-border" />
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button type="button" variant="outline" onClick={handleRefresh}>
-                <RotateCcw />
-                Refresh
-              </Button>
-
-              <AddCustomAttributesPopup onAddAttributes={handleAddCustomAttributes} />
-
-              {customAttributes.length > 0 && (
-                <Badge variant="secondary" className="font-normal">
-                  <PackagePlus className="size-3" />
-                  {customAttributes.length} custom attribute
-                  {customAttributes.length > 1 ? "s" : ""} added
-                </Badge>
-              )}
-            </div>
 
             <div className="flex justify-end gap-3 border-t border-border pt-6">
               <Button type="button" variant="outline" onClick={onCancel}>
@@ -437,6 +613,15 @@ function AddStockItem({ onSubmit, onCancel }: AddStockItemProps) {
           </form>
         </CardContent>
       </Card>
+
+      <AddCustomAttributesPopup
+        existingKeys={existingAttributeKeys}
+        existingLabels={existingAttributeLabels}
+        onCreateAttribute={handleCreateCustomAttribute}
+        open={customAttributesOpen}
+        onOpenChange={setCustomAttributesOpen}
+        hideTrigger
+      />
     </div>
   )
 }

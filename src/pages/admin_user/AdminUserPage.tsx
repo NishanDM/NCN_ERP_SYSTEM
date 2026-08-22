@@ -25,6 +25,14 @@ import StockCategories from "../../stock/StockCategories"
 import StockReports from "../../stock/StockReports"
 import StockCustomerReturnedItems from "../../stock/StockCustomerReturnedItems"
 
+//----------------   SUPPLIER   ---------------------
+import SupplierDebitNotes from "@/suppliers/SupplierDebitNotes"
+import SupplierOutstandings from "@/suppliers/SupplierOutstandings"
+import SupplierPayments from "@/suppliers/SupplierPayments"
+import SupplierReports from "@/suppliers/SupplierReports"
+import SupplierSettlements from "@/suppliers/SupplierSettlements"
+import ViewAllSuppliers from "@/suppliers/ViewAllSuppliers"
+
 import AllQuotations from "../../quotations/AllQuotations"
 import QuotationReports from "../../quotations/QuotationReports"
 
@@ -39,8 +47,6 @@ import {
 
 import AdminSideBar from "./AdminSideBar"
 import AdminTopBar from "./AdminTopBar"
-
-//------------- CUSTOMERS ------------------------//
 
 //------------- CUSTOMERS ------------------------//
 
@@ -154,6 +160,14 @@ const ADMIN_ROUTE_COMPONENTS: Partial<Record<string, React.ComponentType>> = {
 
   [ADMIN_ROUTES.QUOTATION_ALL]: AllQuotations,
   [ADMIN_ROUTES.QUOTATION_REPORTS]: QuotationReports,
+
+
+    [ADMIN_ROUTES.SUPPLIERS_ALL]: ViewAllSuppliers,
+  [ADMIN_ROUTES.SUPPLIERS_OUTSTANDINGS]: SupplierOutstandings,
+  [ADMIN_ROUTES.SUPPLIERS_PAYMENTS_TRACKING]: SupplierPayments,
+  [ADMIN_ROUTES.SUPPLIERS_DEBITNOTE_MANAGEMENT]: SupplierDebitNotes,
+  [ADMIN_ROUTES.SUPPLIERS_SETTLEMENTS]: SupplierSettlements,
+  [ADMIN_ROUTES.SUPPLIERS_REPORTS]: SupplierReports,
 }
 
 function AdminUserPage() {
