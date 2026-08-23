@@ -8,8 +8,11 @@ import {
   Printer,
   RotateCcw,
   Save,
+  Search,
   Trash2,
   Upload,
+  User,
+  X,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -33,12 +36,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import type { Customer } from "@/types/customer"
 
 //==========    COMPONENTS ===========================
 
 import StockTableForNewInvoice from "./StockTableForNewInvoice"
 import SelectedItemPopup from "./SelectedItemPopup"
 import BillingItemsTable from "./BillingItemsTable"
+import CustomerDetailsPopupForNewInvoice from "./CustomerDetailsPopupForNewInvoice"
 import {
   DEFAULT_PAYMENT_METHOD,
   PAYMENT_METHOD_OPTIONS,
@@ -59,6 +64,10 @@ function CreateNewInvoice() {
     DEFAULT_PAYMENT_METHOD
   )
 
+  // Customer selection state
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [customerPopupOpen, setCustomerPopupOpen] = useState(false)
+
   const [isTableOpen, setIsTableOpen] = useState(true)
 
   const [billingItems, setBillingItems] = useState<BillingItem[]>([])
@@ -66,6 +75,15 @@ function CreateNewInvoice() {
 
   const [popupOpen, setPopupOpen] = useState(false)
   const [popupStockItem, setPopupStockItem] = useState<StockItemRecord | null>(null)
+
+  const handleResetForm = () => {
+    setInvoiceDate(getTodayInputDate())
+    setPaymentMethod(DEFAULT_PAYMENT_METHOD)
+    setSelectedCustomer(null)
+    setBillingItems([])
+    setSelectionVersion((v) => v + 1)
+    toast("Form reset", { description: "All fields were reset to their defaults." })
+  }
 
 
 
@@ -123,14 +141,6 @@ function CreateNewInvoice() {
     toast("Print preview", { description: "Print preview is coming soon." })
   }
 
-  const handleResetForm = () => {
-    setInvoiceDate(getTodayInputDate())
-    setPaymentMethod(DEFAULT_PAYMENT_METHOD)
-    setBillingItems([])
-    setSelectionVersion((v) => v + 1)
-    toast("Form reset", { description: "All fields were reset to their defaults." })
-  }
-
   return (
     <div className="w-full px-6 pb-6 lg:px-8 lg:pt-4 lg:pb-8">
       {/* ---- Header --------------------------------------------------------- */}
@@ -157,6 +167,7 @@ function CreateNewInvoice() {
       {/* ---- Invoice meta form ------------------------------------------------ */}
       <div className="mb-6 rounded-xl border border-border/60 bg-card/50 p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Invoice Date */}
           <div className="space-y-1.5">
             <Label htmlFor="invoice-date">Invoice Date</Label>
             <Input
@@ -165,6 +176,51 @@ function CreateNewInvoice() {
               value={invoiceDate}
               onChange={(e) => setInvoiceDate(e.target.value)}
             />
+          </div>
+
+          {/* Search Customer Input (Right side of Invoice Date) */}
+          <div className="space-y-1.5">
+            <Label htmlFor="search-customer">Search Customer</Label>
+            <div className="relative flex items-center">
+              <Input
+                id="search-customer"
+                type="text"
+                readOnly
+                placeholder="Click to search customer..."
+                value={
+                  selectedCustomer
+                    ? `${selectedCustomer.name} (${selectedCustomer.phone})`
+                    : ""
+                }
+                onClick={() => setCustomerPopupOpen(true)}
+                className="cursor-pointer pr-16 text-ellipsis font-medium"
+              />
+              <div className="absolute right-1 flex items-center gap-1">
+                {selectedCustomer ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedCustomer(null)
+                    }}
+                    title="Clear customer selection"
+                  >
+                    <X className="size-3.5 text-muted-foreground hover:text-foreground" />
+                  </Button>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setCustomerPopupOpen(true)}
+                  title="Search Customer"
+                >
+                  <Search className="size-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -269,6 +325,14 @@ function CreateNewInvoice() {
         item={popupStockItem}
         existingItem={existingLineForPopup}
         onConfirm={handlePopupConfirm}
+      />
+
+      {/* ---- Customer selection popup -------------------------------- */}
+      <CustomerDetailsPopupForNewInvoice
+        open={customerPopupOpen}
+        onOpenChange={setCustomerPopupOpen}
+        selectedCustomer={selectedCustomer}
+        onSelectCustomer={setSelectedCustomer}
       />
     </div>
   )
