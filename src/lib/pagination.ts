@@ -1,18 +1,3 @@
-/**
- * pagination.ts
- *
- * Shared pagination helpers. `StockItems.tsx` currently keeps its own local
- * copy of this exact function — it isn't touched here — but any *new*
- * paginated table (like the invoice item picker) should import from here
- * instead of pasting a third copy. Worth folding StockItems.tsx onto this
- * shared version in a later cleanup pass.
- */
-
-/**
- * Builds a compact page-number sequence with ellipses for large page counts,
- * e.g. [1, "ellipsis", 6, 7, 8, "ellipsis", 42] — the same shape GitHub/
- * Google-style pagination uses.
- */
 export function getPaginationRange(
   current: number,
   total: number
