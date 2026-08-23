@@ -125,6 +125,43 @@ function CreateNewInvoice() {
     })
   }
 
+  // Remove individual billing item
+  const handleRemoveBillingItem = (itemId: string) => {
+    setBillingItems((prev) => prev.filter((item) => item.itemId !== itemId))
+    toast("Item removed", { description: "Item removed from invoice." })
+  }
+
+  // Update quantity of a billing item directly
+  const handleUpdateBillingItemQuantity = (itemId: string, newQuantity: number) => {
+    setBillingItems((prev) =>
+      prev.map((item) =>
+        item.itemId === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    )
+  }
+
+  // Edit details of an added billing item
+  const handleEditBillingItem = (item: BillingItem) => {
+    const stockItem: StockItemRecord = {
+      id: item.itemId,
+      itemCode: item.partNumber,
+      itemName: item.itemName,
+      brand: "",
+      stockKeepingUnit: item.partNumber,
+      categoryName: item.categoryName,
+      subCategoryName: "",
+      supplierName: "",
+      quantity: item.availableStock,
+      reorderLevel: 0,
+      supplierUnitPrice: item.costPrice,
+      costPrice: item.costPrice,
+      sellingPrice: item.standardUnitPrice,
+      status: "active",
+    }
+    setPopupStockItem(stockItem)
+    setPopupOpen(true)
+  }
+
   // ---- "More" actions ------------------------------------------------------------
 
   const handleImportItems = () => {
@@ -315,7 +352,12 @@ function CreateNewInvoice() {
 
       {/* ---- Billing items table ------------------------------------- */}
       <div className="mt-6">
-        <BillingItemsTable/>
+        <BillingItemsTable
+          items={billingItems}
+          onRemoveItem={handleRemoveBillingItem}
+          onUpdateQuantity={handleUpdateBillingItemQuantity}
+          onEditItem={handleEditBillingItem}
+        />
       </div>
 
       {/* ---- Quantity / discount popup  ------------------------------- */}
