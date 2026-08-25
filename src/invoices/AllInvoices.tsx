@@ -69,6 +69,9 @@ import {
 import { getPaymentMethodLabel } from "./CreateNewInvoiceData"
 import { formatAmount } from "../stock/StockItemsData"
 
+import InvoiceDetailsModal from "./InvoiceDetailsModal"
+import DeleteInvoiceModal from "./DeleteInvoiceModal"
+
 const ALL_VALUE = "all"
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const
 const TOTAL_COLUMN_COUNT = 13
@@ -119,7 +122,7 @@ function InvoiceStatusBadge({ status }: { status: InvoiceRecord["invoiceStatus"]
 }
 
 function AllInvoices() {
-  const [invoices] = useState<InvoiceRecord[]>(INITIAL_INVOICES)
+  const [invoices, setInvoices] = useState<InvoiceRecord[]>(INITIAL_INVOICES)
 
   const [searchQuery, setSearchQuery] = useState("")
   const [customerFilter, setCustomerFilter] = useState(ALL_VALUE)
@@ -129,6 +132,14 @@ function AllInvoices() {
   const [pageSize, setPageSize] = useState<number>(10)
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+
+  // View modal state
+  const [viewingInvoice, setViewingInvoice] = useState<InvoiceRecord | null>(null)
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+
+  // Delete modal state
+  const [deletingInvoice, setDeletingInvoice] = useState<InvoiceRecord | null>(null)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
   // ---- Summary stats ------------------------------
 
@@ -262,7 +273,8 @@ function AllInvoices() {
   // ---- Row actions -------------------------------
 
   const handleViewInvoice = (invoice: InvoiceRecord) => {
-    toast(`View ${invoice.invoiceNumber}`, { description: "Invoice detail view is coming soon." })
+    setViewingInvoice(invoice)
+    setViewModalOpen(true)
   }
 
   const handleEditInvoice = (invoice: InvoiceRecord) => {
@@ -286,13 +298,21 @@ function AllInvoices() {
   }
 
   const handleDeleteInvoice = (invoice: InvoiceRecord) => {
-    toast(`Delete ${invoice.invoiceNumber}`, {
-      description: "Invoice deletion isn't wired up yet.",
+    setDeletingInvoice(invoice)
+    setDeleteModalOpen(true)
+  }
+
+  // Deletion confirmation handler
+  const handleConfirmDelete = (invoiceId: string) => {
+    setInvoices((prev) => prev.filter((inv) => inv.id !== invoiceId))
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      next.delete(invoiceId)
+      return next
     })
   }
 
   // ---- Bulk actions  -----------------------------
-  
 
   const handleBulkView = () => {
     if (selectedInvoices.length !== 1) return
@@ -321,12 +341,13 @@ function AllInvoices() {
 
   const handleBulkDelete = () => {
     if (selectedInvoices.length === 0) return
-    toast(
-      selectedInvoices.length === 1
-        ? `Delete ${selectedInvoices[0].invoiceNumber}`
-        : `Delete ${selectedInvoices.length} invoices`,
-      { description: "Invoice deletion isn't wired up yet." }
-    )
+    if (selectedInvoices.length === 1) {
+      handleDeleteInvoice(selectedInvoices[0])
+    } else {
+      toast("Bulk delete", {
+        description: "Please select 1 invoice at a time to verify invoice number for deletion.",
+      })
+    }
   }
 
   return (
@@ -769,6 +790,21 @@ function AllInvoices() {
           )}
         </div>
       )}
+
+      {/* View Invoice Details Modal */}
+      <InvoiceDetailsModal
+        open={viewModalOpen}
+        onOpenChange={setViewModalOpen}
+        invoice={viewingInvoice}
+      />
+
+      {/* Delete Invoice Confirmation Modal */}
+      <DeleteInvoiceModal
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        invoice={deletingInvoice}
+        onConfirmDelete={handleConfirmDelete}
+      />
     </div>
   )
 }
