@@ -118,3 +118,62 @@ function generateMockInvoices(count: number): InvoiceRecord[] {
 }
 
 export const INITIAL_INVOICES: InvoiceRecord[] = generateMockInvoices(TOTAL_MOCK_INVOICES)
+
+// ---- Invoice line item breakdown for detail view -----------------------------
+
+export interface InvoiceDetailItem {
+  id: string
+  partNumber: string
+  itemName: string
+  categoryName: string
+  quantity: number
+  unitCostPrice: number
+  unitSellingPrice: number
+  totalSellingPrice: number
+  unitProfit: number
+  totalProfit: number
+}
+
+// Preset list of mock items used to generate ~10 items per invoice
+const SAMPLE_CATALOG_ITEMS = [
+  { partNumber: "SNS-1001", itemName: "PIR Motion Sensor Module HC-SR501", categoryName: "Sensors", baseCost: 220, baseSelling: 350 },
+  { partNumber: "SNS-1002", itemName: "DHT22 Temperature & Humidity Sensor", categoryName: "Sensors", baseCost: 720, baseSelling: 950 },
+  { partNumber: "SNS-1003", itemName: "Ultrasonic Distance Sensor HC-SR04", categoryName: "Sensors", baseCost: 190, baseSelling: 300 },
+  { partNumber: "MCU-2001", itemName: "Arduino Uno R3 Development Board", categoryName: "Microcontrollers", baseCost: 2400, baseSelling: 3200 },
+  { partNumber: "MCU-2002", itemName: "ESP32 DevKit V1 WiFi + Bluetooth", categoryName: "Microcontrollers", baseCost: 1550, baseSelling: 2100 },
+  { partNumber: "MCU-2003", itemName: "Raspberry Pi Pico H Microcontroller", categoryName: "Microcontrollers", baseCost: 990, baseSelling: 1350 },
+  { partNumber: "CBL-3001", itemName: "Male-to-Male Jumper Wires (40pc)", categoryName: "Cables", baseCost: 110, baseSelling: 180 },
+  { partNumber: "CBL-3002", itemName: "USB-C to USB-A Charging Cable 1m", categoryName: "Cables", baseCost: 480, baseSelling: 650 },
+  { partNumber: "CBL-3003", itemName: "JST-XH 2.54mm Connector Kit", categoryName: "Cables", baseCost: 390, baseSelling: 550 },
+  { partNumber: "MTL-4001", itemName: "Aluminum Sheet 1mm 300x300mm", categoryName: "Raw Materials", baseCost: 1250, baseSelling: 1600 },
+]
+
+/** Generate 10 line items for a given invoice record for detail view display */
+export function getInvoiceDetailItems(invoice: InvoiceRecord): InvoiceDetailItem[] {
+  // Use numeric seed derived from invoice number sequence for consistent items per invoice
+  const sequenceNum = parseInt(invoice.invoiceNumber.replace(/\D/g, ""), 10) || 1
+
+  return SAMPLE_CATALOG_ITEMS.map((sample, index) => {
+    // Generate realistic quantities (1 to 5 units per item)
+    const quantity = 1 + ((sequenceNum + index * 3) % 5)
+    
+    const unitCostPrice = sample.baseCost
+    const unitSellingPrice = sample.baseSelling
+    const totalSellingPrice = unitSellingPrice * quantity
+    const unitProfit = unitSellingPrice - unitCostPrice
+    const totalProfit = unitProfit * quantity
+
+    return {
+      id: `${invoice.id}-item-${index + 1}`,
+      partNumber: sample.partNumber,
+      itemName: sample.itemName,
+      categoryName: sample.categoryName,
+      quantity,
+      unitCostPrice,
+      unitSellingPrice,
+      totalSellingPrice,
+      unitProfit,
+      totalProfit,
+    }
+  })
+}
