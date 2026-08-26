@@ -36,6 +36,9 @@ import ViewAllSuppliers from "@/suppliers/ViewAllSuppliers"
 import AllQuotations from "../../quotations/AllQuotations"
 import QuotationReports from "../../quotations/QuotationReports"
 
+//------------- USER MANAGEMENT --------------------//
+import UserManagement from "@/users/UserManagement"
+
 import React, { useState } from "react"
 import { Routes, Route, useParams } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
@@ -168,6 +171,8 @@ const ADMIN_ROUTE_COMPONENTS: Partial<Record<string, React.ComponentType>> = {
   [ADMIN_ROUTES.SUPPLIERS_DEBITNOTE_MANAGEMENT]: SupplierDebitNotes,
   [ADMIN_ROUTES.SUPPLIERS_SETTLEMENTS]: SupplierSettlements,
   [ADMIN_ROUTES.SUPPLIERS_REPORTS]: SupplierReports,
+
+  [ADMIN_ROUTES.USERS]: UserManagement,
 }
 
 function AdminUserPage() {
