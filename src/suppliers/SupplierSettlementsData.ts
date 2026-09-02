@@ -18,7 +18,6 @@ export interface OutstandingGrn {
   id: string
   grnNumber: string
   supplierId: string
-  /** ISO date (YYYY-MM-DD) — used to sort oldest-first for FIFO. */
   grnDate: string
   outstandingAmount: number
 }
