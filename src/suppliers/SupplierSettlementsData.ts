@@ -9,12 +9,16 @@ export const PAYMENT_METHOD_OPTIONS: {
   { value: "bank_transfer", label: "Bank Transfer" },
 ]
 
+export const getPaymentMethodLabel = (value: PaymentMethod): string =>
+  PAYMENT_METHOD_OPTIONS.find((opt) => opt.value === value)?.label ?? value
+
 // ---- Outstanding GRNs  --------------------------------
 
 export interface OutstandingGrn {
   id: string
   grnNumber: string
   supplierId: string
+  /** ISO date (YYYY-MM-DD) — used to sort oldest-first for FIFO. */
   grnDate: string
   outstandingAmount: number
 }
@@ -109,6 +113,7 @@ export interface SettlementRecord {
   supplierName: string
   paymentMethod: PaymentMethod
   amountPaid: number
+  /** ISO date (YYYY-MM-DD). */
   paymentDate: string
   remark: string
   recordedBy: string
@@ -144,4 +149,12 @@ export const formatDisplayDate = (isoDate: string): string => {
     month: "short",
     year: "numeric",
   })
+}
+
+export const getTodayIso = (): string => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, "0")
+  const day = String(now.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }

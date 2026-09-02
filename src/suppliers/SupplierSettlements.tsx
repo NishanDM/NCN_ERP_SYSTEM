@@ -41,6 +41,7 @@ import {
   formatDisplayDate,
   getOutstandingGrnsForSupplier,
   getOutstandingTotalForSupplier,
+  getTodayIso,
   INITIAL_SETTLEMENTS,
   PAYMENT_METHOD_OPTIONS,
   type GrnAllocation,
@@ -61,9 +62,9 @@ function SupplierSettlements() {
   const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(
     null
   )
+  const [paymentDate, setPaymentDate] = useState(getTodayIso())
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash")
   const [amountPaid, setAmountPaid] = useState("")
-  const [paymentDate, setPaymentDate] = useState("2026-09-01")
   const [remark, setRemark] = useState("")
   const [recordedBy, setRecordedBy] = useState("")
 
@@ -95,7 +96,7 @@ function SupplierSettlements() {
     setSelectedSupplierId(null)
     setPaymentMethod("cash")
     setAmountPaid("")
-    setPaymentDate("2026-09-01")
+    setPaymentDate(getTodayIso())
     setRemark("")
     setRecordedBy("")
     setChequeNo("")
